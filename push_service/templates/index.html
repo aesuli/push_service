@@ -6,7 +6,7 @@
 </head>
 <body>
         <h1>Push service</h1>
-    % if enable_channel_creation:
+    % if enable_channel_creation or is_admin:
     <section>
         <h2>Create a New Channel</h2>
         <form method="post" action="create">
@@ -18,7 +18,7 @@
     <section>
         <h2>Access to channels</h2>
         <p>Use a channel name you known to access it.</p>
-        <p>E.g.: <a href="${base_url}channel_name">${base_url}<i>channel_name</i></a></p>
+        <p>E.g.: <a href="channel_name">${base_url}<i>channel_name</i></a></p>
     </section>
     % endif
     % if enable_admin:

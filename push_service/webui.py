@@ -179,7 +179,7 @@ class PushServiceWebUI:
         """
         Creates a new channel with a UUID and redirects to the show page.
         """
-        if not self._enable_channel_creation:
+        if not ( self._enable_channel_creation or (self._enable_admin and cherrypy.session.get('is_admin', False))):
             raise cherrypy.HTTPRedirect("/")
         channel = str(uuid.uuid4())
         self._push_service.add_channel(channel)
