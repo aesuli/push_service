@@ -202,7 +202,7 @@ def main():
     elif args.command == 'iplist':
         # List available IP addresses. Utilized to help users choose the host for webui and subscription commands.
         print("Available IP addresses:")
-        for interface_name, address in available_addresses.list_available_addresses():
+        for interface_name, address in push_service.available_addresses.list_available_addresses():
             print(f"{interface_name}: {address}")
     else:
         # If no command is given, print the help message
