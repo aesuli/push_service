@@ -100,6 +100,8 @@ def main():
                         action='store_true')
     parser.add_argument('--enable_channel_creation', help='enable channel creation feature {webui}',
                         action='store_true')
+    parser.add_argument('--show_home', help='shows the home page {webui}',
+                        action='store_true')
     parser.add_argument('--otp_secret_file', help='path to file storing OTP secret (created if missing) {webui}',
                         type=str,
                         default=Path.home() / '.push_service' / 'otp_secret')
@@ -195,7 +197,7 @@ def main():
                          push_service_email=args.push_service_email) as service:
             push_service.webui.run_webui(service, host=args.host, port=args.port, ssl_certificate=args.ssl_certificate,
                             ssl_private_key=args.ssl_private_key, ssl_chain=args.ssl_chain,
-                            log_dir=args.log_dir, enable_admin=args.enable_admin,
+                            log_dir=args.log_dir, enable_admin=args.enable_admin, show_home=args.show_home,
                             enable_channel_creation=args.enable_channel_creation,
                             otp_secret_file=args.otp_secret_file,
                             admin_password_file=args.admin_password_file)

@@ -111,7 +111,7 @@ It can be started using the `webui` command:
 push_service webui
 ```
 
-The web interface can be configured to enable admin features (login/logout, channel deletion) and channel creation by setting the `--enable_admin` and `--enable_channel_creation` parameters, respectively.
+The web interface can be configured to enable admin features (login/logout, channel deletion) and channel creation by setting the `--show_home`, the `--enable_admin`, and `--enable_channel_creation` parameters, respectively.
 
 The admin account is protected by a password, which is asked at the first login and stored (crypted) in a file specified by the `--admin_password_file` parameter (or, by default in the `.push_service/admin_password` file in user's home directory).
 A two-factor authentication is mandatory, based on a one-time password (OTP) stored in a file specified by the `--otp_secret_file` parameter (or, by default in the `.push_service/otp_secret` file in user's home directory).
@@ -162,7 +162,7 @@ push_service -h
 ```
 ```
 usage: push_service [-h] [-c CONFIG] [-s SAVE] [--db_url DB_URL] [--encryption_password_file ENCRYPTION_PASSWORD_FILE] [--push_service_email PUSH_SERVICE_EMAIL] [--log_dir LOG_DIR] [--host HOST] [--port PORT] [--ssl_certificate SSL_CERTIFICATE] [--ssl_private_key SSL_PRIVATE_KEY]
-                    [--ssl_chain SSL_CHAIN] [--enable_admin] [--enable_channel_creation] [--otp_secret_file OTP_SECRET_FILE] [--admin_password_file ADMIN_PASSWORD_FILE]
+                    [--ssl_chain SSL_CHAIN] [--enable_admin] [--show_home] [--enable_channel_creation] [--otp_secret_file OTP_SECRET_FILE] [--admin_password_file ADMIN_PASSWORD_FILE]
                     {list,create,delete,subscription,message,webui,iplist} ...
 
 positional arguments:
@@ -196,6 +196,7 @@ options:
   --ssl_chain SSL_CHAIN
                         SSL chain file {subscription,webui} (default: None)
   --enable_admin        enable admin features (login/logout, channel deletion) {webui} (default: False)
+  --show_home           shows the home page {webui} (default: False)
   --enable_channel_creation
                         enable channel creation feature {webui} (default: False)
   --otp_secret_file OTP_SECRET_FILE

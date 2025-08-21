@@ -31,6 +31,7 @@ class PushServiceWebUI:
     def __init__(self, push_service: PushService, admin_password_file: Union[Path, str],
                  otp_secret_file: Union[Path, str],
                  template_lookup_dir: Union[str, Path, List[Union[str, Path]], None] = None,
+                 show_home: bool = False,
                  enable_admin: bool = False, enable_channel_creation: bool = False,
                  enabled_channels: Union[List[str], None] = None):
         """
@@ -46,6 +47,7 @@ class PushServiceWebUI:
         """
         self._push_service = push_service
         self._enable_admin = enable_admin
+        self._show_home = show_home
         self._enable_channel_creation = enable_channel_creation
         self._enabled_channels = enabled_channels
         if template_lookup_dir is None:
@@ -90,6 +92,8 @@ class PushServiceWebUI:
         """
         Homepage with (if enabled) channel creation button, admin login, and list of channels.
         """
+        if not self._show_home:
+            cherrypy.HTTPError(404)
         is_admin = cherrypy.session.get('is_admin', False)
         template = self._template_lookup.get_template('index.html')
         scheme = cherrypy.request.scheme
@@ -388,6 +392,7 @@ def run_webui(
         otp_secret_file: Union[Path, str],
         admin_password_file: Union[Path, str],
         enabled_channels: Union[List[str], None] = None,
+        show_home=False,
         enable_channel_creation=False,
         enable_admin=False,
         stop_function=None,
@@ -404,6 +409,7 @@ def run_webui(
     :param otp_secret_file: Path to the file that stores the TOTP secret for two-factor authentication.
     :param admin_password_file: Path to the file that stores the admin password hash.
     :param enabled_channels: List of channels to enable in the web UI. If None, all channels are enabled.
+    :param show_home: If True, shows the homepage with channel creation and admin login options. If False, returns a 404 error for the homepage.
     :param enable_channel_creation: If True, allows users to create new channels.
     :param enable_admin: If True, enables the admin interface for managing channels and subscriptions.
     :param stop_function: Optional function that is called after the server is started and that stops the server when it returns (e.g., waiting for the enter key). If None, the server will block until it is stopped by a signal (SIGTERM, SIGHUP, SIGQUIT, SIGINT).
@@ -437,7 +443,7 @@ def run_webui(
             qr.print_ascii()
 
     webui = PushServiceWebUI(push_service=push_service, admin_password_file=admin_password_file,
-                             otp_secret_file=otp_secret_file,
+                             otp_secret_file=otp_secret_file, show_home=show_home,
                              enable_admin=enable_admin, enable_channel_creation=enable_channel_creation,
                              enabled_channels=enabled_channels)
     cherrypy.tree.mount(webui, config=webui.get_config())
