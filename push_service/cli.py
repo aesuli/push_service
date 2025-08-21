@@ -174,6 +174,7 @@ def main():
             push_service.webui.run_webui(service, host=args.host, port=args.port,
                             ssl_certificate=args.ssl_certificate, ssl_private_key=args.ssl_private_key,
                             ssl_chain=args.ssl_chain, log_dir=args.log_dir, enabled_channels=[args.name],
+                            show_home=False,
                             enable_channel_creation=False, enable_admin=False,
                             otp_secret_file=args.otp_secret_file,
                             admin_password_file=args.admin_password_file,

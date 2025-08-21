@@ -93,7 +93,7 @@ class PushServiceWebUI:
         Homepage with (if enabled) channel creation button, admin login, and list of channels.
         """
         if not self._show_home:
-            cherrypy.HTTPError(404)
+            raise cherrypy.HTTPError(404)
         is_admin = cherrypy.session.get('is_admin', False)
         template = self._template_lookup.get_template('index.html')
         scheme = cherrypy.request.scheme
