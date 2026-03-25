@@ -1,0 +1,30 @@
+services:
+  push-service:
+    build:
+      context: .
+    image: push-service:latest
+    container_name: push-service
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8000"
+      - --db_url
+      - sqlite:////data/channels.db
+      - --encryption_password_file
+      - /data/channel_db_encryption_password
+      - --log_dir
+      - /data/logs
+      - --otp_secret_file
+      - /data/otp_secret
+      - --admin_password_file
+      - /data/admin_password
+      - --show_home
+      - --enable_channel_creation
+      - --enable_admin
+      - webui

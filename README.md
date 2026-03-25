@@ -15,6 +15,74 @@ The web interface supports SSL, which is required to enable subscriptions to ser
 pip install push_service
 ```
 
+## Docker
+
+The most practical way to run this package in Docker is to keep all mutable state in a mounted volume.
+This includes the SQLite database, encryption password file, OTP secret, admin password hash, and logs.
+
+### Run with Docker Compose (recommended)
+
+From the project root:
+
+```bash
+docker compose up -d --build
+```
+
+This will:
+
+- build the image from `Dockerfile`
+- start the web UI on port `8000`
+- persist service data in `./data` on the host
+
+Stop it with:
+
+```bash
+docker compose down
+```
+
+### Run with plain Docker
+
+Build image:
+
+```bash
+docker build -t push-service:latest .
+```
+
+Run container:
+
+```bash
+docker run -d --name push-service -p 8000:8000 -v ${PWD}/data:/data push-service:latest
+```
+
+On PowerShell, if `${PWD}` does not work as expected, use `${PWD}.Path`.
+
+### Use the image published on GHCR
+
+The Docker image is also published to GitHub Container Registry.
+
+Image name:
+
+```text
+ghcr.io/aesuli/push_service
+```
+
+Pull latest image:
+
+```bash
+docker pull ghcr.io/aesuli/push_service:latest
+```
+
+Run published image:
+
+```bash
+docker run -d --name push-service -p 8000:8000 -v ${PWD}/data:/data ghcr.io/aesuli/push_service:latest
+```
+
+### TLS and production note
+
+Push subscriptions usually require HTTPS unless using localhost.
+In production, expose this container through a reverse proxy (for example Caddy, Nginx, or Traefik) that terminates TLS and forwards traffic to port `8000`.
+
 ## Features and Commands
 
 ### Managing channels
