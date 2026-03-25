@@ -61,10 +61,10 @@ class PushServiceWebUI:
             self._otp_secret_file = otp_secret_file
         else:
             raise ValueError('otp_secret_file must be a str or a Path')
-        if not otp_secret_file.parent.exists():
-            otp_secret_file.parent.mkdir(parents=True, exist_ok=True)
-        if otp_secret_file.exists():
-            self._otp_secret = otp_secret_file.read_text('utf-8').strip()
+        if not self._otp_secret_file.parent.exists():
+            self._otp_secret_file.parent.mkdir(parents=True, exist_ok=True)
+        if self._otp_secret_file.exists():
+            self._otp_secret = self._otp_secret_file.read_text('utf-8').strip()
         else:
             self._otp_secret = None
 
@@ -72,9 +72,11 @@ class PushServiceWebUI:
             self._admin_password_file = Path(admin_password_file)
         elif isinstance(admin_password_file, Path):
             self._admin_password_file = admin_password_file
+        else:
+            raise ValueError('admin_password_file must be a str or a Path')
 
-        if not admin_password_file.parent.exists():
-            admin_password_file.parent.mkdir(parents=True, exist_ok=True)
+        if not self._admin_password_file.parent.exists():
+            self._admin_password_file.parent.mkdir(parents=True, exist_ok=True)
         if self._admin_password_file.exists():
             self._admin_password_hash = self._admin_password_file.read_bytes().strip()
         else:
