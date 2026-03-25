@@ -1,0 +1,11 @@
+db_url = sqlite:////data/channels.db
+encryption_password_file = /data/channel_db_encryption_password
+push_service_email = push_service@example.com
+log_dir = /data/logs
+host = 0.0.0.0
+port = 8000
+enable_admin = true
+show_home = true
+enable_channel_creation = true
+otp_secret_file = /data/otp_secret
+admin_password_file = /data/admin_password
