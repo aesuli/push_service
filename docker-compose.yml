@@ -8,7 +8,6 @@ services:
     volumes:
       - ./data:/data
       - ./config:/config
-    restart: unless-stopped
     command:
       - -c
       - /config/push_service.yaml
