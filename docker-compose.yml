@@ -1,14 +1,13 @@
 services:
   push-service:
-    build:
-      context: .
-    image: push-service:latest
+    image: "ghcr.io/aesuli/push_service:latest"
     container_name: push-service
+    restart: unless-stopped
     ports:
       - "8000:8000"
     volumes:
       - ./data:/data
-      - ./config/push_service.yaml:/config/push_service.yaml:ro
+      - ./config:/config
     restart: unless-stopped
     command:
       - -c

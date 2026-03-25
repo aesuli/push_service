@@ -21,46 +21,7 @@ The most practical way to run this package in Docker is to keep all mutable stat
 This includes the SQLite database, encryption password file, OTP secret, admin password hash, and logs.
 The runtime settings are loaded from `config/push_service.yaml`.
 
-### Run with Docker Compose (recommended)
-
-From the project root:
-
-```bash
-docker compose up -d --build
-```
-
-This will:
-
-- build the image from `Dockerfile`
-- start the web UI on port `8000`
-- persist service data in `./data` on the host
-- load service options from `./config/push_service.yaml`
-
-Stop it with:
-
-```bash
-docker compose down
-```
-
-### Run with plain Docker
-
-Build image:
-
-```bash
-docker build -t push-service:latest .
-```
-
-Run container:
-
-```bash
-docker run -d --name push-service -p 8000:8000 -v ${PWD}/data:/data -v ${PWD}/config/push_service.yaml:/config/push_service.yaml:ro push-service:latest -c /config/push_service.yaml webui
-```
-
-On PowerShell, if `${PWD}` does not work as expected, use `${PWD}.Path`.
-
-### Use the image published on GHCR
-
-The Docker image is also published to GitHub Container Registry.
+The Docker image is published on the GitHub Container Registry.
 
 Image name:
 
@@ -77,7 +38,12 @@ docker pull ghcr.io/aesuli/push_service:latest
 Run published image:
 
 ```bash
-docker run -d --name push-service -p 8000:8000 -v ${PWD}/data:/data -v ${PWD}/config/push_service.yaml:/config/push_service.yaml:ro ghcr.io/aesuli/push_service:latest -c /config/push_service.yaml webui
+docker run -d --name push-service -p 8000:8000 -v ${PWD}/data:/data -v ${PWD}/config:/config ghcr.io/aesuli/push_service:latest
+```
+
+Or download and the use the [docker-compose file](docker-compose.yml):
+```bash
+docker compose up -d
 ```
 
 ### Docker configuration file
@@ -89,6 +55,8 @@ config/push_service.yaml
 ```
 
 Edit this file to change host/port, database URL, paths, and feature flags (`show_home`, `enable_admin`, `enable_channel_creation`) without changing Docker commands.
+
+If `config/push_service.yaml` is missing, the container creates it automatically with default values on first startup.
 
 ### TLS and production note
 
