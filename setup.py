@@ -21,7 +21,7 @@ setup(
     name='push_service',
     version=get_version("push_service/__init__.py"),
     packages=find_namespace_packages(include=['push_service', 'push_service.templates']),
-    install_requires=requirements_list,  # Add dependencies from requirements.txt if needed
+    install_requires=requirements_list,
     entry_points={
         'console_scripts': [
             'push_service=push_service.cli:main',

@@ -326,11 +326,35 @@ class PushServiceWebUI:
     def send(self, channel):
         """
         Sends a message to the specified channel.
+
+        Supported request formats:
+        - POST /<channel>/send with the message in the request body.
+        - GET /<channel>/send?message=<payload>
+        - GET /<channel>/send?title=...&body=...&icon=...&url=... (JSON payload is built automatically)
+
         :param channel: The channel to which the message is being sent.
         :return: A JSON response indicating success or failure.
         """
         try:
-            message_content = cherrypy.request.body.read().decode()
+            if cherrypy.request.method == 'POST':
+                message_content = cherrypy.request.body.read().decode()
+            elif cherrypy.request.method == 'GET':
+                # Prefer explicit raw payload when provided.
+                message_content = cherrypy.request.params.get('message')
+
+                if message_content is None:
+                    fields = ['title', 'body', 'icon', 'url']
+                    json_payload = {}
+                    for field in fields:
+                        value = cherrypy.request.params.get(field)
+                        if value:
+                            json_payload[field] = value
+                    if json_payload:
+                        message_content = json.dumps(json_payload)
+                    else:
+                        raise ValueError("Missing message payload. Use 'message' or one of 'title', 'body', 'icon', 'url'.")
+            else:
+                raise cherrypy.HTTPError(405, 'Only GET and POST are allowed for this endpoint.')
 
             sender = cherrypy.request.remote.ip
 

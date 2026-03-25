@@ -102,6 +102,39 @@ Messages can be sent as simple text string or in **JSON format**, allowing for s
 }
 ```
 
+#### Sending messages via web requests
+When the web UI is running, notifications can also be sent through the `/<channel>/send` endpoint.
+
+POST with raw payload in the request body:
+
+```bash
+curl -X POST http://127.0.0.1:8000/my_channel/send \
+  -H "Content-Type: text/plain" \
+  -d "Hello from POST"
+```
+
+POST with JSON payload in the request body:
+
+```bash
+curl -X POST http://127.0.0.1:8000/my_channel/send \
+  -H "Content-Type: application/json" \
+  -d '{"title":"Hello","body":"Notification body","icon":"https://example.com/icon.png","url":"https://example.com"}'
+```
+
+GET with a raw payload in `message`:
+
+```bash
+curl "http://127.0.0.1:8000/my_channel/send?message=Hello%20from%20GET"
+```
+
+GET with structured notification fields, using the same fields of the JSON format:
+
+```bash
+curl "http://127.0.0.1:8000/my_channel/send?title=Hello&body=Notification%20body&icon=https%3A%2F%2Fexample.com%2Ficon.png&url=https%3A%2F%2Fexample.com"
+```
+
+For GET requests, remember to URL-encode query parameter values.
+
 ### Web user interface
 This package also implement a complete web user interface in the style of the notify.run website, allowing users to create channels, subscribe to thems and sending notification messages.
 
