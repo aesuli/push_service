@@ -192,7 +192,7 @@ class PushServiceWebUI:
         raise cherrypy.HTTPRedirect(f"/{channel}")
 
     @cherrypy.expose
-    def default(self, channel, action=None, *args):
+    def default(self, channel, action=None, *args, **kwargs):
         """
         Routes actions to the various methods.
         """
