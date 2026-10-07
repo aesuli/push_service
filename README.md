@@ -41,10 +41,26 @@ Run published image (bound to localhost):
 docker run -d --name push-service -p 127.0.0.1:8000:8000 -v ${PWD}/data:/data -v ${PWD}/config:/config ghcr.io/aesuli/push_service:latest
 ```
 
-Or download and the use the [docker-compose file](docker-compose.yml):
+Or download and use the [docker-compose file](docker-compose.yml):
 ```bash
 docker compose up -d
 ```
+
+To open a shell in the running container and use the CLI (using bash here, sh works too):
+
+```bash
+docker compose exec push-service bash
+```
+
+Run CLI commands from that shell, using the mounted configuration so they connect to the same database as the service:
+
+```bash
+push_service -c /config/push_service.yaml list
+push_service -c /config/push_service.yaml create my_channel
+push_service -c /config/push_service.yaml message my_channel "Hello"
+```
+
+Type `exit` to leave the container shell.
 
 ### Docker configuration file
 
