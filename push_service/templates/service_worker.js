@@ -16,7 +16,7 @@ self.addEventListener('push', function (event) {
             body:  data.body,
             icon: data.icon,
             image: data.image,
-            data : {action : data.action?data.action:'${server_address}/channel/${channel}'},
+            data : {action : data.action?data.action:'${server_address}/${channel}'},
             silent: data.silent,
             renotify: true,
             tag: '${channel}',
