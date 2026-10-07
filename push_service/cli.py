@@ -32,6 +32,16 @@ class _HelpAction(argparse._HelpAction):
         parser.exit()
 
 
+def _str2bool(value):
+    if isinstance(value, bool):
+        return value
+    if value.strip().lower() in ('true', 't', 'yes', 'y', '1', 'on'):
+        return True
+    if value.strip().lower() in ('false', 'f', 'no', 'n', '0', 'off'):
+        return False
+    raise argparse.ArgumentTypeError(f'boolean value expected, got {value!r}')
+
+
 def get_encryption_password(encryption_password_file):
     """
     Retrieves the encryption password from a file or generates a new one if the file does not exist.
@@ -102,6 +112,10 @@ def main():
                         action='store_true')
     parser.add_argument('--show_home', help='shows the home page {webui}',
                         action='store_true')
+    parser.add_argument('--show_send', help='show the "new message" section in the channel page (true/false, default true) {subscription,webui}',
+                        type=_str2bool, nargs='?', const=True, default=True)
+    parser.add_argument('--show_history', help='show the "messages" section in the channel page (true/false, default true) {subscription,webui}',
+                        type=_str2bool, nargs='?', const=True, default=True)
     parser.add_argument('--otp_secret_file', help='path to file storing OTP secret (created if missing) {webui}',
                         type=str,
                         default=Path.home() / '.push_service' / 'otp_secret')
@@ -174,7 +188,7 @@ def main():
             push_service.webui.run_webui(service, host=args.host, port=args.port,
                             ssl_certificate=args.ssl_certificate, ssl_private_key=args.ssl_private_key,
                             ssl_chain=args.ssl_chain, log_dir=args.log_dir, enabled_channels=[args.name],
-                            show_home=False,
+                            show_home=False, show_send=args.show_send, show_history=args.show_history,
                             enable_channel_creation=False, enable_admin=False,
                             otp_secret_file=args.otp_secret_file,
                             admin_password_file=args.admin_password_file,
@@ -199,6 +213,7 @@ def main():
             push_service.webui.run_webui(service, host=args.host, port=args.port, ssl_certificate=args.ssl_certificate,
                             ssl_private_key=args.ssl_private_key, ssl_chain=args.ssl_chain,
                             log_dir=args.log_dir, enable_admin=args.enable_admin, show_home=args.show_home,
+                            show_send=args.show_send, show_history=args.show_history,
                             enable_channel_creation=args.enable_channel_creation,
                             otp_secret_file=args.otp_secret_file,
                             admin_password_file=args.admin_password_file)

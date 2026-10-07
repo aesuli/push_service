@@ -146,7 +146,7 @@ Messages can be sent as simple text string or in **JSON format**, allowing for s
   "title": "Notification Title",
   "body": "Notification Body",
   "icon": "https://example.com/icon.png",
-  "url": "https://example.com"
+  "action": "https://example.com"
 }
 ```
 
@@ -166,7 +166,7 @@ POST with JSON payload in the request body:
 ```bash
 curl -X POST http://127.0.0.1:8000/my_channel/send \
   -H "Content-Type: application/json" \
-  -d '{"title":"Hello","body":"Notification body","icon":"https://example.com/icon.png","url":"https://example.com"}'
+  -d '{"title":"Hello","body":"Notification body","icon":"https://example.com/icon.png","action":"https://example.com"}'
 ```
 
 GET with a raw payload in `message`:
@@ -175,10 +175,10 @@ GET with a raw payload in `message`:
 curl "http://127.0.0.1:8000/my_channel/send?message=Hello%20from%20GET"
 ```
 
-GET with structured notification fields, using the same fields of the JSON format:
+GET with structured notification fields, using the same fields of the JSON format (`action` sets the URL opened when the notification is clicked):
 
 ```bash
-curl "http://127.0.0.1:8000/my_channel/send?title=Hello&body=Notification%20body&icon=https%3A%2F%2Fexample.com%2Ficon.png&url=https%3A%2F%2Fexample.com"
+curl "http://127.0.0.1:8000/my_channel/send?title=Hello&body=Notification%20body&icon=https%3A%2F%2Fexample.com%2Ficon.png&action=https%3A%2F%2Fexample.com"
 ```
 
 For GET requests, remember to URL-encode query parameter values.
@@ -193,6 +193,8 @@ push_service webui
 ```
 
 The web interface can be configured to enable admin features (login/logout, channel deletion) and channel creation by setting the `--show_home`, the `--enable_admin`, and `--enable_channel_creation` parameters, respectively.
+
+Use `--show_send` and `--show_history` (default `true`; set to `false` on the command line or in the configuration file, e.g. `show_send = false`) to show or hide the "new message" and "messages" sections of the channel page.
 
 The admin account is protected by a password, which is asked at the first login and stored (crypted) in a file specified by the `--admin_password_file` parameter (or, by default in the `.push_service/admin_password` file in user's home directory).
 A two-factor authentication is mandatory, based on a one-time password (OTP) stored in a file specified by the `--otp_secret_file` parameter (or, by default in the `.push_service/otp_secret` file in user's home directory).

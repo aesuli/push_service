@@ -31,7 +31,7 @@ class PushServiceWebUI:
     def __init__(self, push_service: PushService, admin_password_file: Union[Path, str],
                  otp_secret_file: Union[Path, str],
                  template_lookup_dir: Union[str, Path, List[Union[str, Path]], None] = None,
-                 show_home: bool = False,
+                 show_home: bool = False, show_send: bool = True, show_history: bool = True,
                  enable_admin: bool = False, enable_channel_creation: bool = False,
                  enabled_channels: Union[List[str], None] = None):
         """
@@ -48,6 +48,8 @@ class PushServiceWebUI:
         self._push_service = push_service
         self._enable_admin = enable_admin
         self._show_home = show_home
+        self._show_send = show_send
+        self._show_history = show_history
         self._enable_channel_creation = enable_channel_creation
         self._enabled_channels = enabled_channels
         if template_lookup_dir is None:
@@ -202,7 +204,8 @@ class PushServiceWebUI:
         elif action is None:
             template = self._template_lookup.get_template('channel.html')
             return template.render(channel=channel, subscriptions=self._push_service.get_subscriptions(channel),
-                                   is_admin=is_admin)
+                                   is_admin=is_admin, show_send=self._show_send,
+                                   show_history=self._show_history)
         elif not self._push_service.channel_exists(channel):
             raise cherrypy.HTTPError(404)
         elif action == "subscription.js":
@@ -332,7 +335,7 @@ class PushServiceWebUI:
         Supported request formats:
         - POST /<channel>/send with the message in the request body.
         - GET /<channel>/send?message=<payload>
-        - GET /<channel>/send?title=...&body=...&icon=...&url=... (JSON payload is built automatically)
+        - GET /<channel>/send?title=...&body=...&icon=...&action=... (JSON payload is built automatically)
 
         :param channel: The channel to which the message is being sent.
         :return: A JSON response indicating success or failure.
@@ -345,7 +348,7 @@ class PushServiceWebUI:
                 message_content = cherrypy.request.params.get('message')
 
                 if message_content is None:
-                    fields = ['title', 'body', 'icon', 'url']
+                    fields = ['title', 'body', 'icon', 'action']
                     json_payload = {}
                     for field in fields:
                         value = cherrypy.request.params.get(field)
@@ -354,7 +357,7 @@ class PushServiceWebUI:
                     if json_payload:
                         message_content = json.dumps(json_payload)
                     else:
-                        raise ValueError("Missing message payload. Use 'message' or one of 'title', 'body', 'icon', 'url'.")
+                        raise ValueError("Missing message payload. Use 'message' or one of 'title', 'body', 'icon', 'action'.")
             else:
                 raise cherrypy.HTTPError(405, 'Only GET and POST are allowed for this endpoint.')
 
@@ -419,7 +422,8 @@ def run_webui(
         admin_password_file: Union[Path, str],
         enabled_channels: Union[List[str], None] = None,
         show_home=False,
-        enable_channel_creation=False,
+        show_send=True,
+        show_history=True,
         enable_admin=False,
         stop_function=None,
 ):
@@ -436,6 +440,8 @@ def run_webui(
     :param admin_password_file: Path to the file that stores the admin password hash.
     :param enabled_channels: List of channels to enable in the web UI. If None, all channels are enabled.
     :param show_home: If True, shows the homepage with channel creation and admin login options. If False, returns a 404 error for the homepage.
+    :param show_send: If True, the channel page shows the "new message" section.
+    :param show_history: If True, the channel page shows the "messages" section.
     :param enable_channel_creation: If True, allows users to create new channels.
     :param enable_admin: If True, enables the admin interface for managing channels and subscriptions.
     :param stop_function: Optional function that is called after the server is started and that stops the server when it returns (e.g., waiting for the enter key). If None, the server will block until it is stopped by a signal (SIGTERM, SIGHUP, SIGQUIT, SIGINT).
@@ -470,6 +476,7 @@ def run_webui(
 
     webui = PushServiceWebUI(push_service=push_service, admin_password_file=admin_password_file,
                              otp_secret_file=otp_secret_file, show_home=show_home,
+                             show_send=show_send, show_history=show_history,
                              enable_admin=enable_admin, enable_channel_creation=enable_channel_creation,
                              enabled_channels=enabled_channels)
     cherrypy.tree.mount(webui, config=webui.get_config())
