@@ -112,10 +112,10 @@ def main():
                         action='store_true')
     parser.add_argument('--show_home', help='shows the home page {webui}',
                         action='store_true')
-    parser.add_argument('--show_send', help='show the "new message" section in the channel page (true/false, default true) {subscription,webui}',
-                        type=_str2bool, nargs='?', const=True, default=True)
-    parser.add_argument('--show_history', help='show the "messages" section in the channel page (true/false, default true) {subscription,webui}',
-                        type=_str2bool, nargs='?', const=True, default=True)
+    parser.add_argument('--show_send', help='show the "new message" section in the channel page {webui}',
+                        action='store_true')
+    parser.add_argument('--show_history', help='show the "messages" section in the channel page {webui}',
+                        action='store_true')
     parser.add_argument('--otp_secret_file', help='path to file storing OTP secret (created if missing) {webui}',
                         type=str,
                         default=Path.home() / '.push_service' / 'otp_secret')

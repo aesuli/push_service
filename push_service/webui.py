@@ -421,6 +421,7 @@ def run_webui(
         otp_secret_file: Union[Path, str],
         admin_password_file: Union[Path, str],
         enabled_channels: Union[List[str], None] = None,
+        enable_channel_creation=False,
         show_home=False,
         show_send=True,
         show_history=True,

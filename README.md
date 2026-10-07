@@ -196,7 +196,7 @@ push_service webui
 
 The web interface can be configured to enable admin features (login/logout, channel deletion) and channel creation by setting the `--show_home`, the `--enable_admin`, and `--enable_channel_creation` parameters, respectively.
 
-Use `--show_send` and `--show_history` (default `true`; set to `false` on the command line or in the configuration file, e.g. `show_send = false`) to show or hide the "new message" and "messages" sections of the channel page.
+Use `--show_send` and `--show_history` to show respectively a form to send messages and the history of sent messages in the channel page.
 
 The admin account is protected by a password, which is asked at the first login and stored (crypted) in a file specified by the `--admin_password_file` parameter (or, by default in the `.push_service/admin_password` file in user's home directory).
 A two-factor authentication is mandatory, based on a one-time password (OTP) stored in a file specified by the `--otp_secret_file` parameter (or, by default in the `.push_service/otp_secret` file in user's home directory).
