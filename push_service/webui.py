@@ -194,33 +194,36 @@ class PushServiceWebUI:
         raise cherrypy.HTTPRedirect(f"/{channel}")
 
     @cherrypy.expose
-    def default(self, channel, action=None, *args, **kwargs):
+    def default(self, channel, *args, **kwargs):
         """
         Routes actions to the various methods.
         """
+        # path segment "command" is taken from *args so that an eventual "command" query parameter cannot collide with it
+        command = args[0] if args else None
+        args = args[1:]
         is_admin = cherrypy.session.get('is_admin', False)
         if not self._push_service.channel_exists(channel) or (self._enabled_channels is not None and channel not in self._enabled_channels):
             raise cherrypy.HTTPError(404)
-        elif action is None:
+        elif command is None:
             template = self._template_lookup.get_template('channel.html')
             return template.render(channel=channel, subscriptions=self._push_service.get_subscriptions(channel),
                                    is_admin=is_admin, show_send=self._show_send,
                                    show_history=self._show_history)
         elif not self._push_service.channel_exists(channel):
             raise cherrypy.HTTPError(404)
-        elif action == "subscription.js":
+        elif command == "subscription.js":
             return self.subscription_js(channel)
-        elif action == "service_worker.js":
+        elif command == "service_worker.js":
             return self.service_worker_js(channel)
-        elif action == 'delete':
+        elif command == 'delete':
             if not is_admin:
                 raise cherrypy.HTTPError(401)
             return self.delete_channel(channel)
-        elif action == 'subscribe':
+        elif command == 'subscribe':
             return self.subscribe(channel)
-        elif action == 'unsubscribe':
+        elif command == 'unsubscribe':
             return self.unsubscribe(channel)
-        elif action == 'delete_subscription':
+        elif command == 'delete_subscription':
             if not is_admin:
                 raise cherrypy.HTTPError(401)
             if len(args) != 1:
@@ -230,9 +233,9 @@ class PushServiceWebUI:
             except:
                 raise cherrypy.HTTPError(400)
             return self.delete_subscription(channel, subscription_id)
-        elif action == 'send':
+        elif command == 'send':
             return self.send(channel)
-        elif action == 'messages':
+        elif command == 'messages':
             return self.messages(channel)
         else:
             raise cherrypy.HTTPError(404)
