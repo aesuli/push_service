@@ -1,8 +1,10 @@
-name: Publish Docker Image
+﻿name: Publish Docker Image
 
 on:
-  release:
-    types: [created]
+  workflow_run:
+    workflows: ["Upload Python Package"]
+    types: [completed]
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -12,10 +14,13 @@ permissions:
 jobs:
   docker:
     runs-on: ubuntu-24.04
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: master
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -30,6 +35,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Read package version
+        id: version
+        run: echo "value=$(python3 -c "import re;print(re.search(r'__version__\s*=\s*.([\d.]+)', open('push_service/__init__.py').read()).group(1))")" >> "$GITHUB_OUTPUT"
+
       - name: Normalize image name
         id: image
         run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}" >> "$GITHUB_OUTPUT"
@@ -41,8 +50,8 @@ jobs:
           images: ${{ steps.image.outputs.name }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
-            type=ref,event=tag
-            type=ref,event=branch
+            type=raw,value=${{ steps.version.outputs.value }}
+            type=raw,value=master
             type=sha
 
       - name: Build and push image
