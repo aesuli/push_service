@@ -35,10 +35,10 @@ Pull latest image:
 docker pull ghcr.io/aesuli/push_service:latest
 ```
 
-Run published image:
+Run published image (bound to localhost):
 
 ```bash
-docker run -d --name push-service -p 8000:8000 -v ${PWD}/data:/data -v ${PWD}/config:/config ghcr.io/aesuli/push_service:latest
+docker run -d --name push-service -p 127.0.0.1:8000:8000 -v ${PWD}/data:/data -v ${PWD}/config:/config ghcr.io/aesuli/push_service:latest
 ```
 
 Or download and the use the [docker-compose file](docker-compose.yml):
@@ -54,7 +54,9 @@ Default Docker configuration lives in:
 config/push_service.yaml
 ```
 
-Edit this file to change host/port, database URL, paths, and feature flags (`show_home`, `enable_admin`, `enable_channel_creation`) without changing Docker commands.
+The default Docker config uses host `0.0.0.0` and port `8000`, stores the database and other mutable files under `/data`, and enables the home page, admin features, channel creation, message sending, and message history (`show_home`, `enable_admin`, `enable_channel_creation`, `show_send`, and `show_history` are all `true`). The service email defaults to `push_service@example.com`.
+
+Admin features are enabled by default, so keep the published port restricted to trusted access. The commands above bind it to localhost; use a TLS-terminating reverse proxy for remote access. Edit this file to change host/port, database URL, paths, and feature flags without changing Docker commands.
 
 If `config/push_service.yaml` is missing, the container creates it automatically with default values on first startup.
 
